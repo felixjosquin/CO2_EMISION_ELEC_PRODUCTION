@@ -2,6 +2,7 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
+#include "secret.h"
 
 #define PIN 14
 #define NUMPIXELS 10
