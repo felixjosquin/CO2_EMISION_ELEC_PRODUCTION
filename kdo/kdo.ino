@@ -24,6 +24,7 @@ void setup() {
   Serial.begin(9600);
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
+  Serial.println();
   Serial.println("Start to connect");
   // int coef = 1;
   // int j = 0;
@@ -39,8 +40,8 @@ void setup() {
   }
   // clear_colors();
   // pixels.show();
-  Serial.println();
-  Serial.println(getToken());  
+  getToken();
+  getData();  
 }
 
 void loop() {
@@ -101,78 +102,78 @@ void loop() {
 //   http->end();
 // }
 
-bool getData(WiFiClientSecure* stream, HTTPClient* http, unsigned long* res) {
-  String key;
-  String value;
-  String valueString;
-  bool sucess = true;
+// bool getData(WiFiClientSecure* stream, HTTPClient* http, unsigned long* res) {
+//   String key;
+//   String value;
+//   String valueString;
+//   bool sucess = true;
 
-  String header = "Bearer " + token;
-  http->begin(*stream, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=2022-08-01T00:00:00+02:00&end_date=2022-08-02T02:16:00+02:00");
-  http->addHeader("Authorization", header);
-  int httpCode = http->GET();
-  Serial.println(httpCode);
-  if (httpCode == 200) {
-    stream->readStringUntil('{');
-    stream->readStringUntil('{');
-    for (int j = 0; j < NB_PRODUCTION_TYPE; j++) {
-      bool error = true;
-      String headerProductionType = stream->readStringUntil('[');
-      int indexProduction = -1;
-      for (int i = 0; i < 4; i++) {
-        readJSON(&headerProductionType, &key, &value);
-        Serial.print(key);
-        Serial.print(" : ");
-        Serial.println(value);
-        if (key == "\"production_type\"") {
-          indexProduction = searchIndexInProducerList(value);
-        }
-      }
-      Serial.println();
-      char c = ',';
-      while (c == ',') {
-        String object = stream->readStringUntil('}');
-        for (int r = 0; r < 4; r++) {
-          readJSON(&object, &key, &value);
-          if (key == "\"value\"") {
-            valueString = value;
-          }
-        }
-        c = stream->read();
-        if (c == (char)13) {
-          stream->readStringUntil((char)10);
-          stream->readStringUntil((char)10);
-          c = stream->read();
-        }
-      }
-      pixels.setPixelColor(0, pixels.Color(255, 0, 100));
-      if (indexProduction != -1) {
-        if (valueString.charAt(0) == '-') {
-          res[indexProduction] = 0;
-        } else {
-          res[indexProduction] = atol(valueString.c_str());
-        }
-        if (res[indexProduction] < 80000) {
-          error = false;
-          pixels.setPixelColor(0, pixels.Color(0, 255, 100));
-        }
-      }
-      pixels.show();
-      delay(100);
-      pixels.setPixelColor(0, pixels.Color(0, 0, 0));
-      pixels.show();
-      sucess = sucess && !error;
-      stream->readStringUntil('{');
-    }
-    http->end();
-  } else if (httpCode == 401) {
-    http->end();
-    Serial.println("Unauthorize get token and resend");
-    // getToken(stream, http);
-    sucess = getData(stream, http, res);
-  }
-  return sucess;
-}
+//   String header = "Bearer " + token;
+//   http->begin(*stream, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=2022-08-01T00:00:00+02:00&end_date=2022-08-02T02:16:00+02:00");
+//   http->addHeader("Authorization", header);
+//   int httpCode = http->GET();
+//   Serial.println(httpCode);
+//   if (httpCode == 200) {
+//     stream->readStringUntil('{');
+//     stream->readStringUntil('{');
+//     for (int j = 0; j < NB_PRODUCTION_TYPE; j++) {
+//       bool error = true;
+//       String headerProductionType = stream->readStringUntil('[');
+//       int indexProduction = -1;
+//       for (int i = 0; i < 4; i++) {
+//         readJSON(&headerProductionType, &key, &value);
+//         Serial.print(key);
+//         Serial.print(" : ");
+//         Serial.println(value);
+//         if (key == "\"production_type\"") {
+//           indexProduction = searchIndexInProducerList(value);
+//         }
+//       }
+//       Serial.println();
+//       char c = ',';
+//       while (c == ',') {
+//         String object = stream->readStringUntil('}');
+//         for (int r = 0; r < 4; r++) {
+//           readJSON(&object, &key, &value);
+//           if (key == "\"value\"") {
+//             valueString = value;
+//           }
+//         }
+//         c = stream->read();
+//         if (c == (char)13) {
+//           stream->readStringUntil((char)10);
+//           stream->readStringUntil((char)10);
+//           c = stream->read();
+//         }
+//       }
+//       pixels.setPixelColor(0, pixels.Color(255, 0, 100));
+//       if (indexProduction != -1) {
+//         if (valueString.charAt(0) == '-') {
+//           res[indexProduction] = 0;
+//         } else {
+//           res[indexProduction] = atol(valueString.c_str());
+//         }
+//         if (res[indexProduction] < 80000) {
+//           error = false;
+//           pixels.setPixelColor(0, pixels.Color(0, 255, 100));
+//         }
+//       }
+//       pixels.show();
+//       delay(100);
+//       pixels.setPixelColor(0, pixels.Color(0, 0, 0));
+//       pixels.show();
+//       sucess = sucess && !error;
+//       stream->readStringUntil('{');
+//     }
+//     http->end();
+//   } else if (httpCode == 401) {
+//     http->end();
+//     Serial.println("Unauthorize get token and resend");
+//     // getToken(stream, http);
+//     sucess = getData(stream, http, res);
+//   }
+//   return sucess;
+// }
 
 int searchIndexInProducerList(String value) {
   for (int i = 0; i < NB_PRODUCTION_TYPE; i++)
