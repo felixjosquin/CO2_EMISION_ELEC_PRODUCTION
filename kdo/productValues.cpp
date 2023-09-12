@@ -1,4 +1,5 @@
 #include <Arduino.h>
+
 #include "productValues.h"
 
 bool isNumber(String str);
@@ -36,7 +37,6 @@ void updateValue(String name, String valueString) {
   }
   listProductObjects[index].value = value;
   listProductObjects[index].error = false;
-  listProductObjects[index].display();
 }
 
 bool isNumber(String str) {

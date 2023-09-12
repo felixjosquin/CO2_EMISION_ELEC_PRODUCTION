@@ -15,7 +15,5 @@
 
   void updateValue(String name,String value);
   void printListProductObjects();
-  
-  extern PRODUCT_OBJ listProductObjects[NB_PRODUCTION_TYPE];
 
 #endif

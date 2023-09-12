@@ -1,9 +1,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <Arduino.h>
-#include "apiRTE.h"
+
+#include "requestAPI.h"
 #include "secret.h"
 #include "productValues.h"
+#include "useJSON.h"
+#include "date.h"
 
 WiFiClientSecure* client = new WiFiClientSecure;
 HTTPClient* http = new HTTPClient;
@@ -11,10 +14,7 @@ String token;
 
 String getProductType(String* headerProductionType);
 String getProductValue(String* headerProductionType);
-
-String stringClear(String dirtyString);
 char getClearChar();
-bool seekJSON(String* objetJSON, String seek, String* value);
 
 void getToken() {
   client->setInsecure();
@@ -31,8 +31,10 @@ void getToken() {
 }
 
 bool getData() {
+  client->setInsecure();
   String header = "Bearer " + token;
-  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=2022-08-01T00:00:00+02:00&end_date=2022-08-02T02:16:00+02:00");
+  getDateTime();
+  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringTomorrow() + "&end_date=" + getStringNow());
   http->addHeader("Authorization", header);
   int httpCode = http->GET();
   Serial.println(httpCode);
@@ -52,17 +54,33 @@ bool getData() {
         productValueChar = getClearChar();
       } while (productValueChar == ',');
 
-      updateValue(productionType,productValue);
+      updateValue(productionType, productValue);
 
       getClearChar();
       productionTypeChar = getClearChar();
     } while (productionTypeChar == ',');
-    
+
     Serial.println("C'est fini !!!!");
   }
   http->end();
   return true;
 }
+
+bool getDateTime() {
+  client->setInsecure();
+  http->begin(*client, "https://worldtimeapi.org/api/timezone/Europe/Paris");
+  int httpCode = http->GET();
+  Serial.println(httpCode);
+  if (httpCode == 200) {
+    String dateString;
+    String objetJSON = client->readString();
+    seekJSON(&objetJSON, "\"datetime\"", &dateString);
+    updateDateNow(dateString);
+  }
+  http->end();
+  return true;
+}
+
 
 String getProductType(String* headerProductionType) {
   String value;
@@ -82,31 +100,6 @@ String getProductValue(String* headerProductionType) {
   } else {
     return "";
   }
-}
-
-
-bool seekJSON(String* objetJSON, String seek, String* value) {
-  int attrIndex;
-  do {
-    attrIndex = objetJSON->indexOf(',');
-    String atrribut = objetJSON->substring(0, attrIndex);
-    String key = stringClear(atrribut.substring(0, atrribut.indexOf(':')));
-    if (key == seek) {
-      *value = stringClear(atrribut.substring(atrribut.indexOf(':') + 1, atrribut.length()));
-      return true;
-    }
-    objetJSON->remove(0, attrIndex + 1);
-  } while (attrIndex != -1);
-  return false;
-}
-
-String stringClear(String dirtyString) {
-  if (dirtyString.indexOf((char)13) != -1) {
-    int startIndex = dirtyString.indexOf((char)13);
-    int lastIndex = dirtyString.lastIndexOf((char)10);
-    dirtyString.remove(startIndex, lastIndex - startIndex + 1);
-  }
-  return dirtyString;
 }
 
 char getClearChar() {
