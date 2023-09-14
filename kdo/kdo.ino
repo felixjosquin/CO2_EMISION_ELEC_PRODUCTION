@@ -9,8 +9,6 @@
 #include "date.h"
 #include "leds.h"
 
-
-
 void setup() {
   Serial.begin(9600);
   Serial.println();
@@ -24,11 +22,20 @@ void setup() {
     delay(100);
   }
   Serial.println(" sucess !!");
-  getToken();
-  getDateTime();
-  getData();
+  offLeds();
+  
+  bool sucess = getToken();
+  showStatement(sucess);
+
+  sucess = getDateTime();
+  showStatement(sucess);
+
+  sucess = getData();
+  showStatement(sucess);
+
   printListProductObjects();
   Serial.println(computeCO2());
+  showCo2(computeCO2());
 }
 
 void loop() {

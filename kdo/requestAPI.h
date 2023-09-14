@@ -3,7 +3,7 @@
 #ifndef REQUEST_API_H
   #define REQUEST_API_H
 
-  void getToken();
+  bool getToken();
   bool getData();
   bool getDateTime();
   

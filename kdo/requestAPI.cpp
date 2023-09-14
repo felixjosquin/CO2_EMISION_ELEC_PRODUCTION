@@ -15,9 +15,10 @@ String token;
 String getProductType(String* headerProductionType);
 String getProductValue(String* productValueObject);
 String getStartDate(String* productValueObject);
+String getStringDatetime(String* reponseWorldTime);
 char getClearChar();
 
-void getToken() {
+bool getToken() {
   client->setInsecure();
   http->begin(*client, "https://digital.iservices.rte-france.com/token/oauth");
   http->addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -31,15 +32,17 @@ void getToken() {
     token = reponse.substring(reponse.indexOf(": \"") + 3, reponse.indexOf("\","));
   }
   http->end();
+  return token.length() == 54;
 }
 
 bool getData() {
+  resetListProductObjects();
   client->setInsecure();
   String header = "Bearer " + token;
-  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringToday() + "&end_date=" + getStringForNextDay());
+  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringMidnigth() + "&end_date=" + getStringForNextDay());
   http->addHeader("Authorization", header);
   int httpCode = http->GET();
-  Serial.print("Request RTE Mix " + getStringToday() + " -> " + getStringForNextDay() + ": ");
+  Serial.print("Request RTE Mix " + getStringMidnigth() + " -> " + getStringForNextDay() + " ( " + getStringStartDate() + " ) : ");
   Serial.println(httpCode);
   if (httpCode == 200) {
     client->readStringUntil('{');
@@ -68,7 +71,7 @@ bool getData() {
     } while (productionTypeChar == ',');
   }
   http->end();
-  return true;
+  return dataAllGood();
 }
 
 bool getDateTime() {
@@ -79,11 +82,15 @@ bool getDateTime() {
   Serial.println(httpCode);
   if (httpCode == 200) {
     String objetJSON = client->readString();
-    String dateString = seekJSON(&objetJSON, "\"datetime\"");
-    updateDateNow(dateString);
+    String dateString = getStringDatetime(&objetJSON);
+    if (dateString.length() == 34) {
+      updateDateNow(dateString);
+      http->end();
+      return true;
+    }
   }
   http->end();
-  return true;
+  return false;
 }
 
 
@@ -97,6 +104,10 @@ String getProductValue(String* productValueObject) {
 
 String getStartDate(String* productValueObject) {
   return seekJSON(productValueObject, "\"start_date\"");
+}
+
+String getStringDatetime(String* reponseWorldTime) {
+  return seekJSON(reponseWorldTime, "\"datetime\"");
 }
 
 char getClearChar() {

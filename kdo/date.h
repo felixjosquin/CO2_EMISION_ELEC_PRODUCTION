@@ -18,7 +18,7 @@ typedef struct {
 void updateDateNow(String dateString);
 
 String getStringStartDate();
-String getStringToday();
+String getStringMidnigth();
 String getStringForNextDay();
 
 #endif

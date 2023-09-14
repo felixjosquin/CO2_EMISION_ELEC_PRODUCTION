@@ -82,3 +82,22 @@ void printListProductObjects() {
     listProductObjects[i].display();
   }
 }
+
+bool productObjIsGood(int i) {
+  return !listProductObjects[i].error;
+}
+
+bool dataAllGood() {
+  for (int i = 0; i < NB_PRODUCTION_TYPE; i++) {
+    if (listProductObjects[i].error) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void resetListProductObjects() {
+  for (int i = 0; i < NB_PRODUCTION_TYPE; i++) {
+    listProductObjects[i].error = true;
+  }
+}
