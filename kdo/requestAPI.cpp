@@ -22,6 +22,8 @@ void getToken() {
   http->addHeader("Content-Type", "application/x-www-form-urlencoded");
   http->addHeader("Authorization", RTE_PASS);
   int httpCode = http->POST("");
+  Serial.print("Request RTE Token : ");
+  Serial.println(httpCode);
   if (httpCode == 200) {
     String reponse = http->getString();
     reponse.remove(0, reponse.indexOf("access_token"));
@@ -33,10 +35,10 @@ void getToken() {
 bool getData() {
   client->setInsecure();
   String header = "Bearer " + token;
-  getDateTime();
   http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringTomorrow() + "&end_date=" + getStringNow());
   http->addHeader("Authorization", header);
   int httpCode = http->GET();
+  Serial.print("Request RTE Mix " + getStringTomorrow() + " -> " + getStringNow() + ": ");
   Serial.println(httpCode);
   if (httpCode == 200) {
     client->readStringUntil('{');
@@ -59,8 +61,6 @@ bool getData() {
       getClearChar();
       productionTypeChar = getClearChar();
     } while (productionTypeChar == ',');
-
-    Serial.println("C'est fini !!!!");
   }
   http->end();
   return true;
@@ -70,6 +70,7 @@ bool getDateTime() {
   client->setInsecure();
   http->begin(*client, "https://worldtimeapi.org/api/timezone/Europe/Paris");
   int httpCode = http->GET();
+  Serial.print("Request Datetime : ");
   Serial.println(httpCode);
   if (httpCode == 200) {
     String dateString;

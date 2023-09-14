@@ -20,8 +20,6 @@ void setup() {
   Serial.println("\n========début========");
 }
 void loop() {
-   
-
   for (int a = NUMPIXELS - 1; a >= 0; a--) {
     for (int i = 0; i < NUMPIXELS; i++) {
       pixels.setPixelColor(i, pixels.Color(0, 0, 0));
