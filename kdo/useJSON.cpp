@@ -2,19 +2,18 @@
 
 #include "useJSON.h"
 
-bool seekJSON(String* objetJSON, String seek, String* value) {
+String seekJSON(String* objetJSON, String seek) {
   int attrIndex;
   do {
     attrIndex = objetJSON->indexOf(',');
     String atrribut = objetJSON->substring(0, attrIndex);
     String key = stringClear(atrribut.substring(0, atrribut.indexOf(':')));
     if (key == seek) {
-      *value = stringClear(atrribut.substring(atrribut.indexOf(':') + 1, atrribut.length()));
-      return true;
+      return stringClear(atrribut.substring(atrribut.indexOf(':') + 1, atrribut.length()));
     }
     objetJSON->remove(0, attrIndex + 1);
   } while (attrIndex != -1);
-  return false;
+  return "";
 }
 
 String stringClear(String dirtyString) {

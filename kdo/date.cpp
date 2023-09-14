@@ -21,21 +21,28 @@ void updateDateNow(String dateString) {
   now->timezone = timezone;
 }
 
-String getStringNow() {
-  return now->getString();
+String getStringStartDate() {
+  DATE startDate = { .year = now->year, .month = now->month, .day = now->day, .hour = now->hour, .min = 0, .timezone = now->timezone };
+  startDate.min = now->min - now->min % 15;
+  return startDate.getString();
 }
 
-String getStringTomorrow() {
-  DATE tommorow = { .year = now->year, .month = now->month, .day = now->day - 1, .hour = 0, .min = 0, .timezone = now->timezone };
-  if (tommorow.day == 0) {
-    tommorow.day = 30;
-    tommorow.month = tommorow.month - 1;
-    if (tommorow.month == 0) {
-      tommorow.month = 12;
-      tommorow.year = tommorow.year - 1;
+String getStringToday() {
+  DATE today = { .year = now->year, .month = now->month, .day = now->day, .hour = 0, .min = 0, .timezone = now->timezone };
+  return today.getString();
+}
+
+String getStringForNextDay() {
+  DATE nextDay = { .year = now->year, .month = now->month, .day = now->day + 1, .hour = 0, .min = 0, .timezone = now->timezone };
+  if (nextDay.day == 30) {
+    nextDay.day = 0;
+    nextDay.month = nextDay.month + 1;
+    if (nextDay.month == 12) {
+      nextDay.month = 0;
+      nextDay.year = nextDay.year + 1;
     }
   }
-  return tommorow.getString();
+  return nextDay.getString();
 }
 
 String DATE::getString() {

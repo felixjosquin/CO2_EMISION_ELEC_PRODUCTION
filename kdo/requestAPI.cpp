@@ -13,7 +13,8 @@ HTTPClient* http = new HTTPClient;
 String token;
 
 String getProductType(String* headerProductionType);
-String getProductValue(String* headerProductionType);
+String getProductValue(String* productValueObject);
+String getStartDate(String* productValueObject);
 char getClearChar();
 
 void getToken() {
@@ -35,10 +36,10 @@ void getToken() {
 bool getData() {
   client->setInsecure();
   String header = "Bearer " + token;
-  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringTomorrow() + "&end_date=" + getStringNow());
+  http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringToday() + "&end_date=" + getStringForNextDay());
   http->addHeader("Authorization", header);
   int httpCode = http->GET();
-  Serial.print("Request RTE Mix " + getStringTomorrow() + " -> " + getStringNow() + ": ");
+  Serial.print("Request RTE Mix " + getStringToday() + " -> " + getStringForNextDay() + ": ");
   Serial.println(httpCode);
   if (httpCode == 200) {
     client->readStringUntil('{');
@@ -50,9 +51,13 @@ bool getData() {
       productionType = getProductType(&headerProductionType);
       char productValueChar;
       String productValue;
+      String startDateString;
       do {
-        String productValueObject = client->readStringUntil('}');
-        productValue = getProductValue(&productValueObject);
+        String productValueObject = client->readStringUntil('}').substring(1);
+        startDateString = getStartDate(&productValueObject);
+        if (startDateString.indexOf(getStringStartDate()) != -1) {
+          productValue = getProductValue(&productValueObject);
+        }
         productValueChar = getClearChar();
       } while (productValueChar == ',');
 
@@ -73,9 +78,8 @@ bool getDateTime() {
   Serial.print("Request Datetime : ");
   Serial.println(httpCode);
   if (httpCode == 200) {
-    String dateString;
     String objetJSON = client->readString();
-    seekJSON(&objetJSON, "\"datetime\"", &dateString);
+    String dateString = seekJSON(&objetJSON, "\"datetime\"");
     updateDateNow(dateString);
   }
   http->end();
@@ -84,23 +88,15 @@ bool getDateTime() {
 
 
 String getProductType(String* headerProductionType) {
-  String value;
-  bool find = seekJSON(headerProductionType, "\"production_type\"", &value);
-  if (find) {
-    return value;
-  } else {
-    return "";
-  }
+  return seekJSON(headerProductionType, "\"production_type\"");
 }
 
-String getProductValue(String* headerProductionType) {
-  String value;
-  bool find = seekJSON(headerProductionType, "\"value\"", &value);
-  if (find) {
-    return value;
-  } else {
-    return "";
-  }
+String getProductValue(String* productValueObject) {
+  return seekJSON(productValueObject, "\"value\"");
+}
+
+String getStartDate(String* productValueObject) {
+  return seekJSON(productValueObject, "\"start_date\"");
 }
 
 char getClearChar() {

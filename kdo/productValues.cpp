@@ -18,7 +18,7 @@ PRODUCT_OBJ listProductObjects[NB_PRODUCTION_TYPE] = {
 void updateValue(String name, String valueString) {
   int index = -1;
   int value;
-  if (!isNumber(valueString)) {
+  if (!isNumber(valueString) || valueString == "") {
     return;
   }
   for (int i = 0; i < NB_PRODUCTION_TYPE; i++) {
@@ -51,8 +51,6 @@ float computeCO2() {
     productElec += productValue;
     productCO2 += listProductObjects[j].productCO2 * productValue;
   }
-  Serial.println(productElec);
-  Serial.println(productCO2);
   return float(productCO2) / float(productElec);
 }
 
