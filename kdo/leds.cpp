@@ -71,7 +71,7 @@ void showCo2(float productCO2) {
 }
 
 void showStatement(bool sucess) {
-  byte red[3] = { 0, 255, 0 };
+  byte red[3] = { 255, 0, 0 };
   byte green[3] = { 0, 255, 0 };
   byte black[3] = { 0, 0, 0 };
 

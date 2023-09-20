@@ -17,10 +17,18 @@ String seekJSON(String* objetJSON, String seek) {
 }
 
 String stringClear(String dirtyString) {
-  if (dirtyString.indexOf((char)13) != -1) {
+  while (dirtyString.indexOf((char)13) != -1) {
+    // Serial.println(dirtyString);
+    // for (int j = 0; j < dirtyString.length(); j++) {
+    //   Serial.print((int)dirtyString[j]);
+    //   Serial.print(" ");
+    // }
+    // Serial.println();
     int startIndex = dirtyString.indexOf((char)13);
-    int lastIndex = dirtyString.lastIndexOf((char)10);
-    dirtyString.remove(startIndex, lastIndex - startIndex + 1);
+    int lastIndex = dirtyString.indexOf((char)10, startIndex + 2) + 1;
+    dirtyString.remove(startIndex, lastIndex - startIndex);
+    // Serial.println(dirtyString);
+    // Serial.println();
   }
   return dirtyString;
 }

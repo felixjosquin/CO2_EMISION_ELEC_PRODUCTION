@@ -12,26 +12,14 @@
 void setup() {
   Serial.begin(9600);
   Serial.println();
-  Serial.println("Start to connect");
-  initColors();
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
-  while (!WiFi.isConnected()) {
-    Serial.print(".");
-    waitStep();
-    delay(100);
-  }
-  Serial.println(" sucess !!");
-  offLeds();
   
-  bool sucess = getToken();
-  showStatement(sucess);
-
-  sucess = getDateTime();
-  showStatement(sucess);
-
-  sucess = getData();
-  showStatement(sucess);
+  initColors();
+  
+  tryAndRetry(REQUEST_TOKEN);
+  tryAndRetry(REQUEST_DATE);
+  tryAndRetry(REQUEST_MIX_ENERGETIQUE);
 
   printListProductObjects();
   Serial.println(computeCO2());

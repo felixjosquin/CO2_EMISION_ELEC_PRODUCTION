@@ -7,6 +7,7 @@
 #include "productValues.h"
 #include "useJSON.h"
 #include "date.h"
+#include "leds.h"
 
 WiFiClientSecure* client = new WiFiClientSecure;
 HTTPClient* http = new HTTPClient;
@@ -17,6 +18,38 @@ String getProductValue(String* productValueObject);
 String getStartDate(String* productValueObject);
 String getStringDatetime(String* reponseWorldTime);
 char getClearChar();
+
+void tryAndRetry(int requestIdentifier) {
+  if (!WiFi.isConnected()) {
+    offLeds();
+    Serial.println("Start to connect");
+    while (!WiFi.isConnected()) {
+      Serial.print(".");
+      waitStep();
+      delay(100);
+    }
+    Serial.println(" sucess !!");
+    offLeds();
+  }
+
+  for (byte j = 0; j < MAX_RETRY; j++) {
+    bool sucess;
+    if (requestIdentifier == REQUEST_DATE) {
+      sucess = getDateTime();
+    }
+    else if (requestIdentifier == REQUEST_TOKEN) {
+      sucess = getToken();
+    }
+    else if (requestIdentifier == REQUEST_MIX_ENERGETIQUE) {
+      sucess = getData();
+    }
+    showStatement(sucess);
+    if (sucess) {
+      return;
+    }
+    delay(5000);
+  }
+}
 
 bool getToken() {
   client->setInsecure();
@@ -52,6 +85,7 @@ bool getData() {
     do {
       String headerProductionType = client->readStringUntil('[');
       productionType = getProductType(&headerProductionType);
+      Serial.println(headerProductionType);
       char productValueChar;
       String productValue;
       String startDateString;
@@ -60,6 +94,7 @@ bool getData() {
         startDateString = getStartDate(&productValueObject);
         if (startDateString.indexOf(getStringStartDate()) != -1) {
           productValue = getProductValue(&productValueObject);
+          Serial.println(productValueObject);
         }
         productValueChar = getClearChar();
       } while (productValueChar == ',');
