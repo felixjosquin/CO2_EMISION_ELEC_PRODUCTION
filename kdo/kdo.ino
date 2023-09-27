@@ -9,23 +9,29 @@
 #include "date.h"
 #include "leds.h"
 
+#define TIME_REFRESH 10
+
 void setup() {
   Serial.begin(9600);
   Serial.println();
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
-  
+
   initColors();
-  
+
   tryAndRetry(REQUEST_TOKEN);
   tryAndRetry(REQUEST_DATE);
-  tryAndRetry(REQUEST_MIX_ENERGETIQUE);
-
-  printListProductObjects();
-  Serial.println(computeCO2());
-  showCo2(computeCO2());
 }
 
 void loop() {
-
+  printDatetime();
+  tryAndRetry(REQUEST_MIX_ENERGETIQUE);
+  Serial.println();
+  printListProductObjects();
+  Serial.println();
+  Serial.print("CO² : ");
+  Serial.println(computeCO2());
+  showCo2(computeCO2());
+  delay(TIME_REFRESH * 60000);
+  addTime(TIME_REFRESH);
 }

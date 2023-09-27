@@ -15,19 +15,22 @@ String token;
 
 String getProductType(String* headerProductionType);
 String getProductValue(String* productValueObject);
-String getStartDate(String* productValueObject);
+String getEndDate(String* productValueObject);
 String getStringDatetime(String* reponseWorldTime);
 char getClearChar();
 
 void tryAndRetry(int requestIdentifier) {
   if (!WiFi.isConnected()) {
     offLeds();
+    int i = 0;
     Serial.println("Start to connect");
     while (!WiFi.isConnected()) {
       Serial.print(".");
       waitStep();
       delay(100);
+      i++;
     }
+    addTime(i/600);
     Serial.println(" sucess !!");
     offLeds();
   }
@@ -36,11 +39,9 @@ void tryAndRetry(int requestIdentifier) {
     bool sucess;
     if (requestIdentifier == REQUEST_DATE) {
       sucess = getDateTime();
-    }
-    else if (requestIdentifier == REQUEST_TOKEN) {
+    } else if (requestIdentifier == REQUEST_TOKEN) {
       sucess = getToken();
-    }
-    else if (requestIdentifier == REQUEST_MIX_ENERGETIQUE) {
+    } else if (requestIdentifier == REQUEST_MIX_ENERGETIQUE) {
       sucess = getData();
     }
     showStatement(sucess);
@@ -57,8 +58,9 @@ bool getToken() {
   http->addHeader("Content-Type", "application/x-www-form-urlencoded");
   http->addHeader("Authorization", RTE_PASS);
   int httpCode = http->POST("");
-  Serial.print("Request RTE Token : ");
-  Serial.println(httpCode);
+  Serial.print("======  Request RTE Token : ");
+  Serial.print(httpCode);
+  Serial.println("  ======");
   if (httpCode == 200) {
     String reponse = http->getString();
     reponse.remove(0, reponse.indexOf("access_token"));
@@ -75,8 +77,9 @@ bool getData() {
   http->begin(*client, "https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?production_subtype=TOTAL&start_date=" + getStringMidnigth() + "&end_date=" + getStringForNextDay());
   http->addHeader("Authorization", header);
   int httpCode = http->GET();
-  Serial.print("Request RTE Mix " + getStringMidnigth() + " -> " + getStringForNextDay() + " ( " + getStringStartDate() + " ) : ");
-  Serial.println(httpCode);
+  Serial.print("======  RTE Mix " + getStringMidnigth() + " -> " + getStringForNextDay() + " ( end_date: " + getStringEndDate() + " ) : ");
+  Serial.print(httpCode);
+  Serial.println("  ======");
   if (httpCode == 200) {
     client->readStringUntil('{');
     client->readStringUntil('{');
@@ -88,13 +91,13 @@ bool getData() {
       Serial.println(headerProductionType);
       char productValueChar;
       String productValue;
-      String startDateString;
+      String endDateString;
       do {
         String productValueObject = client->readStringUntil('}').substring(1);
-        startDateString = getStartDate(&productValueObject);
-        if (startDateString.indexOf(getStringStartDate()) != -1) {
-          productValue = getProductValue(&productValueObject);
+        endDateString = getEndDate(&productValueObject);
+        if (endDateString.indexOf(getStringEndDate()) != -1) {
           Serial.println(productValueObject);
+          productValue = getProductValue(&productValueObject);
         }
         productValueChar = getClearChar();
       } while (productValueChar == ',');
@@ -104,6 +107,10 @@ bool getData() {
       getClearChar();
       productionTypeChar = getClearChar();
     } while (productionTypeChar == ',');
+  } else if (httpCode >= 400) {
+    http->end();
+    tryAndRetry(REQUEST_TOKEN);
+    return getData();
   }
   http->end();
   return dataAllGood();
@@ -113,8 +120,9 @@ bool getDateTime() {
   client->setInsecure();
   http->begin(*client, "https://worldtimeapi.org/api/timezone/Europe/Paris");
   int httpCode = http->GET();
-  Serial.print("Request Datetime : ");
-  Serial.println(httpCode);
+  Serial.print("======  Request Datetime : ");
+  Serial.print(httpCode);
+  Serial.println("  ======");
   if (httpCode == 200) {
     String objetJSON = client->readString();
     String dateString = getStringDatetime(&objetJSON);
@@ -137,8 +145,8 @@ String getProductValue(String* productValueObject) {
   return seekJSON(productValueObject, "\"value\"");
 }
 
-String getStartDate(String* productValueObject) {
-  return seekJSON(productValueObject, "\"start_date\"");
+String getEndDate(String* productValueObject) {
+  return seekJSON(productValueObject, "\"end_date\"");
 }
 
 String getStringDatetime(String* reponseWorldTime) {
