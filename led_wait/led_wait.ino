@@ -1,5 +1,5 @@
 #include <Adafruit_NeoPixel.h>
-#define PIN 14
+#define PIN 4
 #define NUMPIXELS 10
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 const int first_color[3] = { 0, 125, 125 };
@@ -20,8 +20,6 @@ void setup() {
   Serial.println("\n========début========");
 }
 void loop() {
-   
-
   for (int a = NUMPIXELS - 1; a >= 0; a--) {
     for (int i = 0; i < NUMPIXELS; i++) {
       pixels.setPixelColor(i, pixels.Color(0, 0, 0));
