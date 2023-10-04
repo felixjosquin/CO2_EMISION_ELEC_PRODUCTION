@@ -11,7 +11,7 @@
 
 WiFiClientSecure* client = new WiFiClientSecure;
 HTTPClient* http = new HTTPClient;
-String token;
+String token = "Loremipsumdolorsitametconsecteturadipiscingelit";
 
 String getProductType(String* headerProductionType);
 String getProductValue(String* productValueObject);
@@ -30,7 +30,7 @@ void tryAndRetry(int requestIdentifier) {
       delay(100);
       i++;
     }
-    addTime(i/600);
+    addTime(i / 600);
     Serial.println(" sucess !!");
     offLeds();
   }
@@ -48,7 +48,8 @@ void tryAndRetry(int requestIdentifier) {
     if (sucess) {
       return;
     }
-    delay(5000);
+    delay(60000);
+    addTime(1);
   }
 }
 
@@ -107,7 +108,7 @@ bool getData() {
       getClearChar();
       productionTypeChar = getClearChar();
     } while (productionTypeChar == ',');
-  } else if (httpCode >= 400) {
+  } else if (httpCode == 401) {
     http->end();
     tryAndRetry(REQUEST_TOKEN);
     return getData();

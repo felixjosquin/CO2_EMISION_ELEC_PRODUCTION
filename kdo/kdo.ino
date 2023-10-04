@@ -26,11 +26,12 @@ void setup() {
 void loop() {
   printDatetime();
   tryAndRetry(REQUEST_MIX_ENERGETIQUE);
-  Serial.println();
   printListProductObjects();
-  Serial.println();
-  Serial.print("CO² : ");
-  Serial.println(computeCO2());
+  
+  Serial.print("Impact carbon : ");
+  Serial.print(computeCO2());
+  Serial.println(" gCO²/kWh");
+
   showCo2(computeCO2());
   delay(TIME_REFRESH * 60000);
   addTime(TIME_REFRESH);

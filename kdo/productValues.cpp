@@ -66,24 +66,19 @@ bool isNumber(String str) {
 
 void PRODUCT_OBJ::display() {
   Serial.print(this->name);
-  Serial.print(" (");
+  Serial.print(" : ");
   Serial.print(this->value);
-  Serial.print(" )  --->  ");
-  Serial.println(this->error);
-  // Serial.println(this->value);
-  // Serial.print("  productCO2 : ");
-  // Serial.println(this->productCO2);
-  // Serial.print("  meanProduction : ");
-  // Serial.println(this->meanProduction);
-  // Serial.print("  error : ");
-  // Serial.println(this->error);
-  // Serial.println();
+  Serial.print(" MW  (error: ");
+  Serial.print(this->error);
+  Serial.println(" )");
 }
 
 void printListProductObjects() {
+  Serial.println();
   for (int i = 0; i < NB_PRODUCTION_TYPE; i++) {
     listProductObjects[i].display();
   }
+  Serial.println();
 }
 
 bool productObjIsGood(int i) {

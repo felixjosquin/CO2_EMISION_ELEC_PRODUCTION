@@ -4,6 +4,7 @@
 #include "requestAPI.h"
 
 String addZero(int val);
+int getNumberDayFromMonth(int month);
 
 DATE *now = new DATE;
 
@@ -25,14 +26,6 @@ void updateDateNow(String dateString) {
 String getStringEndDate() {
   int remainderMin = now->min % 15;
   DATE endDate = { .year = now->year, .month = now->month, .day = now->day, .hour = now->hour, .min = now->min - remainderMin, .timezone = now->timezone };
-  // if (remainderMin < 6 && startDate.hour != 0) {
-  //   if (startDate.min != 0) {
-  //     startDate.min -= 15;
-  //   } else {
-  //     startDate.min = 45;
-  //     startDate.hour -= 1;
-  //   }
-  // }
   return endDate.getString();
 }
 
@@ -43,10 +36,10 @@ String getStringMidnigth() {
 
 String getStringForNextDay() {
   DATE nextDay = { .year = now->year, .month = now->month, .day = now->day + 1, .hour = 0, .min = 0, .timezone = now->timezone };
-  if (nextDay.day == 30) {
+  if (nextDay.day == getNumberDayFromMonth(now->month) + 1) {
     nextDay.day = 1;
     nextDay.month = nextDay.month + 1;
-    if (nextDay.month == 12) {
+    if (nextDay.month == 13) {
       nextDay.month = 1;
       nextDay.year = nextDay.year + 1;
     }
@@ -69,12 +62,12 @@ String addZero(int val) {
 
 void addTime(int delta) {
   now->min += delta;
-  if (now->min >= 60) {
+  while (now->min >= 60) {
     now->hour++;
     now->min -= 60;
-    if (now->hour % 4 == 0) {
-      tryAndRetry(REQUEST_DATE);
-    }
+  }
+  if (now->hour % 4 == 0 || now->hour > 24) {
+    tryAndRetry(REQUEST_DATE);
   }
 }
 
@@ -82,4 +75,21 @@ void printDatetime() {
   Serial.print("!!!!!!! ");
   Serial.print(now->getString());
   Serial.println(" !!!!!!!");
+}
+
+int getNumberDayFromMonth(int month) {
+  switch (month) {
+    case 2:
+      return 28;
+      break;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+      return 30;
+      break;
+    default:
+      return 31;
+      break;
+  }
 }
