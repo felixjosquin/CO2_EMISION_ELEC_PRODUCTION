@@ -3,11 +3,11 @@
 #include <ArduinoJson.h>
 #include <Adafruit_NeoPixel.h>
 
-#include "secret.h"
-#include "requestAPI.h"
-#include "productValues.h"
-#include "date.h"
-#include "leds.h"
+#include "src/secret.h"
+#include "src/requestAPI.h"
+#include "src/productValues.h"
+#include "src/date.h"
+#include "src/leds.h"
 
 #define TIME_REFRESH 10
 
