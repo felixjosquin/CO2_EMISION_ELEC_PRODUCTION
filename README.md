@@ -93,19 +93,20 @@ To build this device, you will need the following components:
 
 - If the board successfully connects to the Wi-Fi network, it can initiate different requests. When a request succeeds, the LED will flash in green, and in case of failure, it will flash in red. _In the event of a failure, the program will retrieve data from the average energy mix_.
 
-- Subsequently, the LEDs will illuminate sequentially, their brightness adjusting in proportion to the carbon emissions of electricity production, as depicted in this table :
-  | LED Number | Equivalent CO2 | Average Time On (as a fraction of time) |
-  | :---------------------------: | :------------------------------------------------: | :-----------------------: |
-  | 0 | 20 g/kWh | 100 % |
-  | 1 | 35 g/kWh | 88 % |
-  | 3 | 40 g/kWh | 80 % |
-  | 4 | 45 g/kWh | 71 % |
-  | 5 | 50 g/kWh | 63 % |
-  | 6 | 55 g/kWh | 56 % |
-  | 7 | 65 g/kWh | 39 % |
-  | 8 | 75 g/kWh | 21 % |
-  | 9 | 85 g/kWh | 7.5 % |
-  | 10 | 100 g/kWh | 0.5 % |
+- Subsequently, the LEDs will illuminate individually, and the quantity of illuminated LEDs corresponds to the carbon emissions of electricity production, as illustrated in this table:
+
+  | Number of Leds ON | Equivalent CO2 | Average Time On (as a fraction of time) |
+  | :---------------: | :------------: | :-------------------------------------: |
+  |         1         |    20 g/kWh    |                  100 %                  |
+  |         2         |    35 g/kWh    |                  88 %                   |
+  |         3         |    40 g/kWh    |                  80 %                   |
+  |         4         |    45 g/kWh    |                  71 %                   |
+  |         5         |    50 g/kWh    |                  63 %                   |
+  |         6         |    55 g/kWh    |                  56 %                   |
+  |         7         |    65 g/kWh    |                  39 %                   |
+  |         8         |    75 g/kWh    |                  21 %                   |
+  |         9         |    85 g/kWh    |                  7.5 %                  |
+  |        10         |   100 g/kWh    |                  0.5 %                  |
 
 **Data Sources**: Historic RTE data (2021 -> 2023)
 
