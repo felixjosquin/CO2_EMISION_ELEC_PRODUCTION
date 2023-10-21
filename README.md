@@ -95,18 +95,18 @@ To build this device, you will need the following components:
 
 - Subsequently, the LEDs will illuminate individually, and the quantity of illuminated LEDs corresponds to the carbon emissions of electricity production, as illustrated in this table:
 
-  | Number of Leds ON | Equivalent CO2 | Average Time On (as a fraction of time) |
-  | :---------------: | :------------: | :-------------------------------------: |
-  |         1         |    20 g/kWh    |                  100 %                  |
-  |         2         |    35 g/kWh    |                  88 %                   |
-  |         3         |    40 g/kWh    |                  80 %                   |
-  |         4         |    45 g/kWh    |                  71 %                   |
-  |         5         |    50 g/kWh    |                  63 %                   |
-  |         6         |    55 g/kWh    |                  56 %                   |
-  |         7         |    65 g/kWh    |                  39 %                   |
-  |         8         |    75 g/kWh    |                  21 %                   |
-  |         9         |    85 g/kWh    |                  7.5 %                  |
-  |        10         |   100 g/kWh    |                  0.5 %                  |
+  | Number of Leds ON | Equivalent CO2 | Average Duration with as least </br> this number of LEDs ON</br> ( fraction of the time) |
+  | :---------------: | :------------: | :--------------------------------------------------------------------------------------: |
+  |         1         |    20 g/kWh    |                                          100 %                                           |
+  |         2         |    35 g/kWh    |                                           88 %                                           |
+  |         3         |    40 g/kWh    |                                           80 %                                           |
+  |         4         |    45 g/kWh    |                                           71 %                                           |
+  |         5         |    50 g/kWh    |                                           63 %                                           |
+  |         6         |    55 g/kWh    |                                           56 %                                           |
+  |         7         |    65 g/kWh    |                                           39 %                                           |
+  |         8         |    75 g/kWh    |                                           21 %                                           |
+  |         9         |    85 g/kWh    |                                          7.5 %                                           |
+  |        10         |   100 g/kWh    |                                          0.5 %                                           |
 
 **Data Sources**: Historic RTE data (2021 -> 2023)
 
