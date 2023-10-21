@@ -5,34 +5,110 @@ This project involves the creation of a device that displays real-time CO2 emiss
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Required Hardware](#required-hardware)
-- [Setup](#setup)
-- [Configuration](#configuration)
+- [How It Works](#how-it-works)
+- [Required](#required)
+- [Getting started](#getting-started)
 - [Usage](#usage)
-- [Contributions](#contributions)
-- [License](#license)
+- [Configuration](#configuration)
 
 ## Introduction
 
-Climate change is a major challenge humanity is facing, and reducing CO2 emissions is crucial to mitigate its effects. This project aims to raise awareness about the impact of electrical production on CO2 emissions in France. It uses real-time electrical production data to calculate and display the corresponding carbon footprint.
+Climate change is a major challenge humanity is facing, and reducing CO2 emissions is crucial to mitigate its effects. This project aims to raise awareness about the impact of electrical production on CO2 emissions in France.
+This project is a box that displays the carbon impact of French electricity production in real time using a set of LEDs.
 
-## Required Hardware
+## How It Works
+
+This system uses real-time electrical production data from RTE to compute and display the associated carbon footprint. It relies on predefined carbon equivalence values for generating one kilowatt-hour of electricity in each sector.
+
+The total carbon emissions are determined by multiplying the production share in each sector by the respective carbon equivalence value. In case of an error in obtaining the energy mix, a predetermined value of mean production share by sector.
+
+The formula for calculating the global carbon footprint $(eCO_2)_{global}$ is as follows:
+
+$$(eCO_2)_{global} = \sum_{i\ \in\ product\_sector} (eCO_2)_{sector\_i} \times \frac{Product_{\ i}}{Product_{\ total}}$$
+
+| Electricity Generation Sector | Carbon Emissions Equivalency (g of eCO2 per 1 kWh) | Average Power Output (MW) |
+| :---------------------------: | :------------------------------------------------: | :-----------------------: |
+|       Fossil Hard Coal        |                       1 060                        |            456            |
+|          Fossil Oil           |                        730                         |            122            |
+|          Fossil Gas           |                        418                         |           4 238           |
+|           Bioenergy           |                        494                         |           1 123           |
+|             Wind              |                         14                         |           4 299           |
+|             Solar             |                         43                         |           1 696           |
+|            Nuclear            |                         6                          |          39 924           |
+|             Hydro             |                         6                          |           6 920           |
+
+**Data Sources**: [economiedenergie.fr](https://www.economiedenergie.fr/les-emissions-de-co2-par-energie/), [youmatter.world](https://youmatter.world/fr/co2-kwh-electricite-france-mix-electrique/), and historic RTE data
+
+## Required
 
 To build this device, you will need the following components:
 
-- ESP8266 (NodeMCU, Wemos D1 Mini, etc.)
-- A set of LEDs (e.g., RGB LEDs)
-- Resistors and wires to connect the LEDs
+- ESP8266
+- A set of 10 LEDs (e.g., RGB LEDs)
 - USB power supply for the ESP8266
 - Internet access to fetch electrical production data
+- Arduino IDE configure for ESP8266 Card
 
-## Setup
+## Getting started
 
-Ensure you connect the LEDs to the ESP8266 as per the wiring diagram provided in the "schematics" folder. You can customize the setup based on your requirements.
+1. **Create an RTE API Account**
 
-## Configuration
+   - Visit the website [data.rte-france.com](https://data.rte-france.com/) and create an account.
+   - Create an application with associated APIs, specifically the "Actual Generation" API.
 
-1. Clone this GitHub repository to your computer.
+2. **Hardware Setup**
+
+   - Solder the 10 LEDs together, ensuring you follow the correct pin connections.
+   - Connect the Vcc pin to 5V, the GND (Ground) pin to GND, and the "dint" pin to pin 2 on your board (you can customize the pin in "led.h": `#define PIN` - _please note that these pins may not match the board markings; verify online_).
+
+3. **Clone this GitHub Repository to Your Computer**
 
    ```bash
-   git clone https://github.com/your-username/co2-electrical-production-france.git# CO2_EMISION_ELEC_PRODUCTION
+   git clone https://github.com/your-username/co2-electrical-production-france.git#CO2_EMISION_ELEC_PRODUCTION
+   ```
+
+4. **Configure API Credentials**
+
+   Inside the `src` folder, create a file named `secret.cpp` and add the following code:
+
+   ```cpp
+   #include "secret.h"
+
+   const char SSID[] = "${name_wifi}";
+   const char PASSWORD[] = "${code_wifi}";
+   const char RTE_PASS[] = "Basic ${identifiant_secret_RTE}";
+   ```
+
+   Note: The `identifiant_secret_RTE` can be found in the 'application' section on the RTE website. Please click on the 'copier 64' button.
+
+5. **Upload the Code**
+
+   Connect the card to the laptop and upload the code using the Arduino IDE.
+
+## Usage
+
+- When the board is connected, it will make an attempt to establish a Wi-Fi connection. During this process, it will blink as demonstrated below, continuing until it successfully.
+
+![Wifi Wait](./gif/wait_wifi.gif)
+
+- If the board successfully connects to the Wi-Fi network, it can initiate different requests. When a request succeeds, the LED will flash in green, and in case of failure, it will flash in red. _In the event of a failure, the program will retrieve data from the average energy mix_.
+
+- Subsequently, the LEDs will illuminate sequentially, their brightness adjusting in proportion to the carbon emissions of electricity production, as depicted in this table :
+  | LED Number | Equivalent CO2 | Average Time On (as a fraction of time) |
+  | :---------------------------: | :------------------------------------------------: | :-----------------------: |
+  | 0 | 20 g/kWh | 100 % |
+  | 1 | 35 g/kWh | 88 % |
+  | 3 | 40 g/kWh | 80 % |
+  | 4 | 45 g/kWh | 71 % |
+  | 5 | 50 g/kWh | 63 % |
+  | 6 | 55 g/kWh | 56 % |
+  | 7 | 65 g/kWh | 39 % |
+  | 8 | 75 g/kWh | 21 % |
+  | 9 | 85 g/kWh | 7.5 % |
+  | 10 | 100 g/kWh | 0.5 % |
+
+**Data Sources**: Historic RTE data (2021 -> 2023)
+
+![Show Result](./gif/show_result.gif)
+
+## Configuration
