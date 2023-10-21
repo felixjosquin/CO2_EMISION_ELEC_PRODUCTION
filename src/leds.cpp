@@ -3,9 +3,16 @@
 
 #include "leds.h"
 
+const int firstColor[3] = { 100, 125, 125 };
+const int lastColor[3] = { 255, 100, 125 };
+byte sucessColor[3] = { 0, 255, 0 };
+byte failureColor[3] = { 255, 0, 0 };
+const int co2RangeStep[NUMPIXELS] = { 20, 35, 40, 45, 50, 55, 65, 75, 85, 100 };
+
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 byte** colorPixels = new byte*[NUMPIXELS];
 byte stepWait = 0;
+byte black[3] = { 0, 0, 0 };
 
 void setColor(byte offSet, byte* color);
 void clearColor();
@@ -29,7 +36,6 @@ void waitStep() {
 
 void clearColor() {
   for (byte i = 0; i < NUMPIXELS; i++) {
-    byte black[3] = { 0, 0, 0 };
     setColor(i, black);
   }
 }
@@ -40,8 +46,6 @@ void setColor(byte offSet, byte color[3]) {
 
 void initColors() {
   pixels.begin();
-  const int firstColor[3] = { 0, 125, 125 };
-  const int lastColor[3] = { 255, 0, 125 };
   for (int i = 0; i < NUMPIXELS; i++) {
     colorPixels[i] = new byte[3];
     for (int j = 0; j < 3; j++) {
@@ -57,7 +61,6 @@ void offLeds() {
 }
 
 void showCo2(float productCO2) {
-  const int co2RangeStep[NUMPIXELS] = { 20, 35, 40, 45, 50, 55, 65, 75, 85, 100 };
   offLeds();
   for (byte index = 0; index < NUMPIXELS; index++) {
     if (productCO2 > co2RangeStep[index]) {
@@ -71,14 +74,10 @@ void showCo2(float productCO2) {
 }
 
 void showStatement(bool sucess) {
-  byte red[3] = { 255, 0, 0 };
-  byte green[3] = { 0, 255, 0 };
-  byte black[3] = { 0, 0, 0 };
-
   if (sucess) {
-    setColor(0, green);
+    setColor(0, sucessColor);
   } else {
-    setColor(0, red);
+    setColor(0, failureColor);
   }
   pixels.show();
   delay(100);

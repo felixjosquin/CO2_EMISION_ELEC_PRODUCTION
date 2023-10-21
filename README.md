@@ -46,8 +46,11 @@ To build this device, you will need the following components:
 - ESP8266
 - A set of 10 LEDs (e.g., RGB LEDs)
 - USB power supply for the ESP8266
-- Internet access to fetch electrical production data
 - Arduino IDE configure for ESP8266 Card
+- Internet access to making calls to three APIs: :
+  - [rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale](https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale) **1 call every 10 minutes**
+  - [rte-france.com/token/oauth](https://digital.iservices.rte-france.com/token/oauth) **1 call every 2 hours**
+  - [worldtimeapi.org/api/timezone/Europe/Paris](https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale) **1 call every 4 hours**
 
 ## Getting started
 
@@ -109,7 +112,28 @@ To build this device, you will need the following components:
   |        10         |   100 g/kWh    |                                          0.5 %                                           |
 
 **Data Sources**: Historic RTE data (2021 -> 2023)
+</br>
+</br>
 
 ![Show Result](./gif/show_result.gif)
 
 ## Configuration
+
+### Color Leds
+
+In the src/leds.cpp file, you have the ability to modify the LED colors in two ways:
+
+- You can change the two colors that form the gradient. `firstColor` corresponds to the color of the first LED when the carbon footprint is low, and `lastColor` represents the color of the last LED, which only lights up when the carbon impact is significant.
+
+- The variables `successColor` and `failureColor` allow you to customize the color that flashes when a request to the APIs succeeds or fails, respectively.
+
+```cpp
+const int firstColor[3] = { ${Red_value}, ${Green_value}, ${Blue_value} };
+const int lastColor[3] = { ${Red_value}, ${Green_value}, ${Blue_value} };
+byte successColor[3] = { ${Red_value}, ${Green_value}, ${Blue_value} };
+byte failureColor[3] = { ${Red_value}, ${Green_value}, ${Blue_value} };
+
+// Each value corresponds to the intensity of each color, represented as an integer ranging from 0 to 255
+```
+
+### Color Leds
