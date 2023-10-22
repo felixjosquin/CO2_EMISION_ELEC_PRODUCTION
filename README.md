@@ -24,7 +24,7 @@ The total carbon emissions are determined by multiplying the production share in
 
 The formula for calculating the global carbon footprint $(eCO_2)_{global}$ is as follows:
 
-$$(eCO_2)_{global} = \sum_{i\ \in\ product\_sector} (eCO_2)_{sector\_i} \times \frac{Product_{\ i}}{Product_{\ total}}$$
+$(eCO_2)_{global} = \sum_{i\ \in\ product\_sector} (eCO_2)_{sector\_i} \times \frac{Product_{\ i}}{Product_{\ total}}$
 
 | Electricity Generation Sector | Carbon Emissions Equivalency</br>(g of eCO2 per 1 kWh) | Average Power Output (MW) |
 | :---------------------------: | :----------------------------------------------------: | :-----------------------: |
