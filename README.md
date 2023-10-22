@@ -26,16 +26,16 @@ The formula for calculating the global carbon footprint $(eCO_2)_{global}$ is as
 
 $$(eCO_2)_{global} = \sum_{i\ \in\ product\_sector} (eCO_2)_{sector\_i} \times \frac{Product_{\ i}}{Product_{\ total}}$$
 
-| Electricity Generation Sector | Carbon Emissions Equivalency (g of eCO2 per 1 kWh) | Average Power Output (MW) |
-| :---------------------------: | :------------------------------------------------: | :-----------------------: |
-|       Fossil Hard Coal        |                       1 060                        |            456            |
-|          Fossil Oil           |                        730                         |            122            |
-|          Fossil Gas           |                        418                         |           4 238           |
-|           Bioenergy           |                        494                         |           1 123           |
-|             Wind              |                         14                         |           4 299           |
-|             Solar             |                         43                         |           1 696           |
-|            Nuclear            |                         6                          |          39 924           |
-|             Hydro             |                         6                          |           6 920           |
+| Electricity Generation Sector | Carbon Emissions Equivalency</br>(g of eCO2 per 1 kWh) | Average Power Output (MW) |
+| :---------------------------: | :----------------------------------------------------: | :-----------------------: |
+|       Fossil Hard Coal        |                         1 060                          |            456            |
+|          Fossil Oil           |                          730                           |            122            |
+|          Fossil Gas           |                          418                           |           4 238           |
+|           Bioenergy           |                          494                           |           1 123           |
+|             Wind              |                           14                           |           4 299           |
+|             Solar             |                           43                           |           1 696           |
+|            Nuclear            |                           6                            |          39 924           |
+|             Hydro             |                           6                            |           6 920           |
 
 **Data Sources**: [economiedenergie.fr](https://www.economiedenergie.fr/les-emissions-de-co2-par-energie/), [youmatter.world](https://youmatter.world/fr/co2-kwh-electricite-france-mix-electrique/), and historic RTE data
 
