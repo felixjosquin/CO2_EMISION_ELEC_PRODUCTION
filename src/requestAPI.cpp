@@ -89,7 +89,6 @@ bool getData() {
     do {
       String headerProductionType = client->readStringUntil('[');
       productionType = getProductType(&headerProductionType);
-      Serial.println(headerProductionType);
       char productValueChar;
       String productValue;
       String endDateString;
@@ -97,7 +96,6 @@ bool getData() {
         String productValueObject = client->readStringUntil('}').substring(1);
         endDateString = getEndDate(&productValueObject);
         if (endDateString.indexOf(getStringEndDate()) != -1) {
-          Serial.println(productValueObject);
           productValue = getProductValue(&productValueObject);
         }
         productValueChar = getClearChar();
